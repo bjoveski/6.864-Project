@@ -1,3 +1,3 @@
 def input():
-  print("hello");
-  
+  print("hello")
+  print("hi")  
