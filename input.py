@@ -1,0 +1,3 @@
+def input():
+  print("hello");
+  
