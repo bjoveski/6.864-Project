@@ -1,5 +1,9 @@
 from lxml import etree
 
+import Question
+from Question import *
+
+
 class Parser:
   @staticmethod
   def getRoot():
@@ -17,11 +21,15 @@ class Parser:
         return set()
  
   @staticmethod
+  def getBodyHistogram(elem):
+    return None
+
+  @staticmethod
   def getAllQuestionsFromRoot(root):
     questions = []
     for elem in root:
-      if elem.attrib["PostTypeId"] == "1":
-        q = Question(elem)
+      if elem.attrib["PostTypeId"] == "1": ## question
+        q = Question.Question(elem)
         questions.append(q)
 
     print("question count = %d" % len(questions))
@@ -32,7 +40,7 @@ class Parser:
     questions = []
     for i in range(nodeCount):
       if root[i].attrib["PostTypeId"] == "1":
-        q = Question(root[i])
+        q = Question.Question(root[i])
         questions.append(q)
 
     print("question count = %d" % len(questions))

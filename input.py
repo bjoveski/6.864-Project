@@ -1,5 +1,19 @@
+#std imports
 from lxml import etree
 import operator
+
+##local imports
+import TagHistogram
+from TagHistogram import *
+
+import Question
+from Question import *
+
+import Parser
+from Parser import *
+
+
+
 
 def main():
   questions = Parser.getAllQuestionsFromRoot(Parser.getRoot())
@@ -16,31 +30,7 @@ def main():
 
 
 
-class TagHistogram:
-  def __init__(self):
-    self.histogram = {}
 
-  def populateHistogram(self, question):
-    for tag in question.tags:
-      if tag in self.histogram:
-        self.histogram[tag] += 1;
-      else:
-        self.histogram[tag] = 1;
-
-  def sortHistogram(self):
-    return sorted(self.histogram.iteritems(), key = operator.itemgetter(1), reverse=True)
-
-
-
-
-
-class Question:
-
-  def __init__(self, elem):
-    self.body = elem.attrib["Body"]
-    self.title = elem.attrib["Title"]
-    self.score = int(elem.attrib["Score"])
-    self.tags = Parser.getTags(elem)
 
   
 

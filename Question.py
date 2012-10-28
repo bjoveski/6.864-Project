@@ -1,6 +1,10 @@
 from lxml import etree
 import operator
 
+import Parser
+from Parser import *
+
+
 class Question:
 
   def __init__(self, elem):
