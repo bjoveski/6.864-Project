@@ -26,7 +26,21 @@ class Question:
   def compareTitles(self, question):
   	vec1 = self.titleVector 
   	vec2 = question.titleVector
-  	return inner(vec1, vec2) / (norm(vec1) * norm(vec2))
-  	
+  	norm1 = inner(vec1, vec1)
+  	norm2 = inner(vec2, vec2)
+  	if (norm1 != 0 and norm2 != 0):
+		  return inner(vec1, vec2) / (math.sqrt(norm1) * math.sqrt(norm2))
+	  else:
+		  return 0
 
+	def findMostSimilar(self, questions):
+    maxSimilarity = 0
+    mostSimilar = None
+    for q in questions:
+      if (q != self):
+        similarity = self.compareTitles(q)
+        if (similarity > maxSimilarity):
+          maxSimilarity = similarity
+          mostSimilar = q
 
+    return (mostSimilar, maxSimilarity)

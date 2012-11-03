@@ -39,7 +39,8 @@ class TitleHistogram:
 
   def pruneHistogram(self, threshold):
     newHist = dict((key, val) for key, val in self.histogram.iteritems() if val > threshold)
-    return TitleHistogram(newHist) 
+    self.histogram = newHist
+
 
   def initWord2Index(self):
     self.word2index = {}
@@ -54,7 +55,7 @@ class TitleHistogram:
   def createHistogram(self, questions, threshold):
     for q in questions:
       self.populateHistogram(q)
-    self = pruneHistogram(threshold)
+    self.pruneHistogram(threshold)
     self.initWord2Index()
 
 
