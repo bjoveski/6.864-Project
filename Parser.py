@@ -7,7 +7,11 @@ from Question import *
 class Parser:
   @staticmethod
   def getRoot():
-    path = "/Users/bjoveski/Dropbox/nlp dataset/Stack Exchange Data Dump - Sept 2011/Content/092011 Super User/posts.xml"
+    file_ = open("config.txt")
+    path = file_.readline()
+    file_.close()
+
+##    path = "/home/ezz/Dropbox/nlp dataset/Stack Exchange Data Dump - Sept 2011/Content/092011 Super User/posts.xml"
     tree = etree.parse(path)
     return tree.getroot()
 
