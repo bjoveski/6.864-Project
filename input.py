@@ -1,20 +1,22 @@
 #std imports
 from lxml import etree
 import operator
+from numpy import *
 
 ##local imports
-import TagHistogram
+# import TagHistogram
 from TagHistogram import *
 
-import Question
+# import Question
 from Question import *
 
-import Parser
+# import Parser
 from Parser import *
 
+def getQuestions():
+	return Parser.getAllQuestionsFromRoot(Parser.getRoot())
 
-
-
+	
 def main():
   questions = Parser.getAllQuestionsFromRoot(Parser.getRoot())
   tagHistogram = TagHistogram()
@@ -28,12 +30,3 @@ def main():
   top1000tags = [i[0] for i in top1000pairs]
   print top1000tags
 
-
-
-
-
-  
-
-
-
-    

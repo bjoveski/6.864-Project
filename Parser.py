@@ -29,7 +29,7 @@ class Parser:
     questions = []
     for elem in root:
       if elem.attrib["PostTypeId"] == "1": ## question
-        q = Question.Question(elem)
+        q = Question(elem)
         questions.append(q)
 
     print("question count = %d" % len(questions))
@@ -40,8 +40,12 @@ class Parser:
     questions = []
     for i in range(nodeCount):
       if root[i].attrib["PostTypeId"] == "1":
-        q = Question.Question(root[i])
+        q = Question(root[i])
         questions.append(q)
 
     print("question count = %d" % len(questions))
     return questions
+
+  @staticmethod
+  def getWordArray(string):
+    return string.lower().split()
