@@ -12,7 +12,7 @@ class Parser:
     file_.close()
 
 ##    path = "/home/ezz/Dropbox/nlp dataset/Stack Exchange Data Dump - Sept 2011/Content/092011 Super User/posts.xml"
-    tree = etree.parse(path)
+    tree = etree.parse(path[:-1])
     return tree.getroot()
 
   @staticmethod
