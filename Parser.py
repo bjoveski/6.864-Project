@@ -1,4 +1,6 @@
 from lxml import etree
+import lxml.html
+
 
 import Question
 from Question import *
@@ -23,6 +25,11 @@ class Parser:
         return set(raw.split("><")) 
       else:
         return set()
+
+  @staticmethod
+  def getStringFromHtmlString(htmlString):
+    return lxml.html.fromstring(htmlString).text_content()
+
  
   @staticmethod
   def getBodyHistogram(elem):

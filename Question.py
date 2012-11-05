@@ -14,6 +14,7 @@ class Question:
     self.title = elem.attrib["Title"]
     self.score = int(elem.attrib["Score"])
     self.tags = Parser.Parser.getTags(elem)
+    self.bodyString = Parser.Parser.getStringFromHtmlString(self.body)
 
 
   def populateTitleVector(self, titleHistogram):
@@ -33,14 +34,20 @@ class Question:
     else:
       return 0
 
-  def findMostSimilar(self, questions):
+
+  def findMostSimilarTitle(self, questions):
     maxSimilarity = 0
     mostSimilar = None
-    for q in questions:
-      if (q != self):
-        similarity = self.compareTitles(q)
-        if (similarity > maxSimilarity):
-          maxSimilarity = similarity
-          mostSimilar = q
-
-    return (mostSimilar, maxSimilarity)
+    norm1 = math.sqrt(inner(self.titleVector, self.titleVector))
+    if norm1 == 0:
+      return (None, 0)
+    else:
+      for q in questions:
+        if (q != self):
+          norm2sq = inner(q.titleVector, q.titleVector)
+          if (norm2sq != 0):
+            similarity = inner(q.titleVector, self.titleVector) / (norm1 * math.sqrt(norm2sq))
+            if (similarity > maxSimilarity):
+              maxSimilarity = similarity
+              mostSimilar = q
+      return (mostSimilar, maxSimilarity)
