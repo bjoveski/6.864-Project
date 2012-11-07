@@ -1,10 +1,47 @@
 #This is a file to run my draft code
 
+import re
+import math
+import itertools
+import nltk
+from nltk.tag.simplify import simplify_wsj_tag
 from nltk.corpus import wordnet
 
-x = wordnet.synset('dog.n.01')
-y = wordnet.synset('cat.n.01')
-x.wup_similarity(y)
+
+def cossim(x,y):
+    a=set(x)
+    b=set(y)
+    return len(a & b)/math.sqrt(len(a)*len(b))
+
+def filter_words(tokens): #filter nouns and verbs
+    t = nltk.pos_tag(tokens)
+    filt = []
+    for word, tag in t:
+        simptag = simplify_wsj_tag(tag)
+        if simptag == 'N':
+            filt.append([word,'n'])
+        elif simptag == 'V':
+            filt.append([word,'v'])
+    return filt
+
+def wordsim(x,y):
+    reducx = filter_words(x)
+    reducy = filter_words(y)
+    sim = 0
+    count = -0.1
+    for wordx,tagx in reducx:
+        for (wordy,tagy) in reducy:
+            a = wordnet.synsets(wordx,tagx)
+            b = wordnet.synsets(wordy,tagy)
+            if (len(a)>0 and len(b)>0):
+                wsim = a[0].wup_similarity(b[0])
+                if wsim != None:
+                    sim = sim + wsim
+                count = count +1
+                #print(sim)
+    return sim/count
+    
+
 
 # title, description, answer, tags for some questions
 
@@ -25,7 +62,7 @@ a2 = 'mainly the amount of RAM accessible. In most 32bit OSs there is a 4gb (clo
 # related to q1
 q3 = 'Should I install 64-bit versions of operating systems?'
 d3 = 'With the release of Windows 7 coming up, 64-bit operating systems have caught my attention. What are the main advantages and disadvantages of installing 64-bit Windows 7? What type of compatibility issues will I face and would i have to install 64-bit software, or will all the applications I have been using in 32-bit operating systems work just the same? Edit: My computer is only 5 months old, so it supports 64-bit operating systems'
-t3 = ['windows-7 ','windows ','64-bit ','operating-systems']
+t3 = ['windows-7','windows','64-bit','operating-systems']
 a3 = 'Yes absolutely. I havent encountered any hardware or program issues. All of your 32-bit applications should work fine. Mine have. Windows 7 has got to have the best hardware support Windows has ever had'
 
 # http://superuser.com/questions/83137/
@@ -45,6 +82,57 @@ a5 = 'Right click Computer->properties. Under system look at "system type", ther
 # http://superuser.com/questions/96092/os-version-32-bit-or-64-bit
 q6 = 'OS version: 32-bit or 64-bit?'
 d6 = 'Whats the command line to find out if the OS is running a 32-bit version or 64-bit of Windows?'
-t6 = ['windows ','computer-architecture ','cpu-architecture ','windows-edition']
-a6 = 'I can not attach answer to another post so here. Piping the result of systeminfo - is taking a quite good amount in time and writes to the console so is not the best solution for command files (batch scripts - anyhow You like to call them B-) ). Even with the findstr - it does not find this on other language version of windows. On a central european language win7 os it also returns ..."X86-based"... on the result but something other on then the "type" were looking for. I am not sure that it can vary on other language variants of the os. Probably the "wmic" method is the most reliable - it asks the os directly. Other possible quick solution can be to examine a variable (at least working on win7 at me). echo %PROCESSOR_ARCHITECTURE% Ok - it is quite long to remember but possible a set | findstr ARCH can be remembered. Sure - some can modify a system variable so not that reliable than wmic. But can be used quickly. I hope I could help someone out.'
+t6 = ['windows','computer-architecture','cpu-architecture','windows-edition']
+a6 = 'I can not attach answer to another post so here. Piping the result of systeminfo - is taking a quite good amount in time and writes to the console so is not the best solution for command files (batch scripts - anyhow You like to call them B-) ). Even with the findstr - it does not find this on other language version of windows. On a central european language win7 os it also returns ..."X86-based"... on the result but something other on then the "type" were looking for. I am not sure that it can vary on other language variants of the os. Probably the "wmic" method is the most reliable - it asks the os directly. Other possible quick solution can be to examine a variable (at least working on win7 at me). echo %PROCESSOR_ARCHITECTURE% Ok - it is quite long to remember but possible a set + findstr ARCH can be remembered. Sure - some can modify a system variable so not that reliable than wmic. But can be used quickly. I hope I could help someone out.'
+
+lstWords = set([])
+q = [0]*6
+q[0] = nltk.word_tokenize(q1.lower())
+q[1] = nltk.word_tokenize(q2.lower())
+q[2] = nltk.word_tokenize(q3.lower())
+q[3] = nltk.word_tokenize(q4.lower())
+q[4] = nltk.word_tokenize(q5.lower())
+q[5] = nltk.word_tokenize(q6.lower())
+d = [0]*6
+d[0] = nltk.word_tokenize(d1.lower())
+d[1] = nltk.word_tokenize(d2.lower())
+d[2] = nltk.word_tokenize(d3.lower())
+d[3] = nltk.word_tokenize(d4.lower())
+d[4] = nltk.word_tokenize(d5.lower())
+d[5] = nltk.word_tokenize(d6.lower())
+t = [0]*6
+t[0] = t1
+t[1] = t2
+t[2] = t3
+t[3] = t4
+t[4] = t5
+t[5] = t6
+a = [0]*6
+a[0] = nltk.word_tokenize(a1.lower())
+a[1] = nltk.word_tokenize(a2.lower())
+a[2] = nltk.word_tokenize(a3.lower())
+a[3] = nltk.word_tokenize(a4.lower())
+a[4] = nltk.word_tokenize(a5.lower())
+a[5] = nltk.word_tokenize(a6.lower())
+qa = [0]*6
+qa[0] = q[0]+d[0]+a[0]+t[0]
+qa[1] = q[1]+d[1]+a[1]+t[1]
+qa[2] = q[2]+d[2]+a[2]+t[2]
+qa[3] = q[3]+d[3]+a[3]+t[3]
+qa[4] = q[4]+d[4]+a[4]+t[4]
+qa[5] = q[5]+d[5]+a[5]+t[5]
+
+print("cosine similarity")
+for j in range(6):
+    print("Q%d" % j),
+    for i in range(6):
+        print("%.6f" %  cossim(d[i],d[j])),
+    print
+    
+print("semantic similarity")
+for j in range(6):
+    print("Q%d" % j),
+    for i in range(6):
+        print("%.6f" %  wordsim(d[i],d[j])),
+    print
 
