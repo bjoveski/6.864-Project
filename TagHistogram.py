@@ -23,8 +23,8 @@ class TitleHistogram:
     self.histogram = {}
 
 
-  def __init__(self, histogram):
-    self.histogram = histogram
+  #def __init__(self, histogram):
+  #  self.histogram = histogram
 
   def populateHistogram(self, question):
     for word in Parser.getWordArray(question.title):

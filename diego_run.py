@@ -28,17 +28,19 @@ def wordsim(x,y):
     reducx = filter_words(x)
     reducy = filter_words(y)
     sim = 0
-    count = -0.1
+    count = -0.01
     for wordx,tagx in reducx:
-        for (wordy,tagy) in reducy:
-            a = wordnet.synsets(wordx,tagx)
-            b = wordnet.synsets(wordy,tagy)
-            if (len(a)>0 and len(b)>0):
-                wsim = a[0].wup_similarity(b[0])
-                if wsim != None:
-                    sim = sim + wsim
-                count = count +1
-                #print(sim)
+        a = wordnet.synsets(wordx,tagx)
+        if len(a)>0:
+            maxsim = 0
+            count = count +1
+            for (wordy,tagy) in reducy:
+                b = wordnet.synsets(wordy,tagy)
+                if len(b)>0:
+                    wsim = a[0].wup_similarity(b[0])
+                    if wsim > maxsim:
+                        maxsim = wsim
+            sim = sim + maxsim
     return sim/count
     
 
@@ -72,14 +74,14 @@ d4 = 'I have manually installed Windows 7 Ultimate on my AMD on 32-bit, but i am
 t4 = ['windows-7','64-bit','32-bit']
 a4 = 'You have a 32bit OS on 64bit capable hardware. Basically, this means you CAN use a 64bit OS, but you dont have to. Theres really little point unless you have >3GB of RAM. Compatibility issues are mainly a thing of the past, too - 64bit architecture can emulate 32bit architecture just fine in the vast, vast majority of cases.'
 
-# http://superuser.com/questions/115662/how-can-i-find-out-which-version-of-windows-7-i-am-running-64-bit-or-32-bit?rq=1
+# http://superuser.com/questions/115662/
 # copy of q6
 q5 = 'How can I find out which version of Windows 7 I am running? 64-bit or 32-bit?'
 d5 = 'How can I find out which version of Windows 7 I am running? 64-bit or 32-bit?'
 t5 = ['windows-7','64-bit ','32-bit']
 a5 = 'Right click Computer->properties. Under system look at "system type", there you have it.'
 
-# http://superuser.com/questions/96092/os-version-32-bit-or-64-bit
+# http://superuser.com/questions/96092/
 q6 = 'OS version: 32-bit or 64-bit?'
 d6 = 'Whats the command line to find out if the OS is running a 32-bit version or 64-bit of Windows?'
 t6 = ['windows','computer-architecture','cpu-architecture','windows-edition']
@@ -126,13 +128,13 @@ print("cosine similarity")
 for j in range(6):
     print("Q%d" % j),
     for i in range(6):
-        print("%.6f" %  cossim(d[i],d[j])),
+        print("%.2f" %  cossim(d[i],a[j])),
     print
     
 print("semantic similarity")
 for j in range(6):
     print("Q%d" % j),
     for i in range(6):
-        print("%.6f" %  wordsim(d[i],d[j])),
+        print("%.2f" %  wordsim(d[i],a[j])),
     print
 
