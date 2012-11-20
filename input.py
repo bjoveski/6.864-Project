@@ -13,10 +13,17 @@ from Question import *
 # import Parser
 from Parser import *
 
+# from Answer import *
+
+from PostHistoryItem import *
+
 def getQuestions():
 	return Parser.getAllQuestionsFromRoot(Parser.getRoot())
 
 	
+def getHistoryPosts():
+  return Parser.getAllPostHistoryItemsFromRoot(Parser.getPostHistoryRoot())
+
 def main():
   questions = Parser.getAllQuestionsFromRoot(Parser.getRoot())
   tagHistogram = TagHistogram()

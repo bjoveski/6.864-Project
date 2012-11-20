@@ -5,16 +5,47 @@ import lxml.html
 import Question
 from Question import *
 
+import PostHistoryItem
+from PostHistoryItem import *
 
 class Parser:
+
+  @staticmethod
+  def getPostHistoryItems(start=0, end=100):
+      num = end - start
+      items = [None] * (num)
+      (postPath, postHistoryPath) = Parser.getConfigPaths()
+      tree = Parser.getPostHistoryRoot()
+      for i in range(num):
+        items[i] = PostHistoryItem(tree[start + i])
+      return items
+
+  @staticmethod
+  def getConfigPaths():
+    file_ = open("config.txt")
+    postPath = file_.readline()
+    postHistoryPath = file_.readline()
+    file_.close()
+    return (postPath[:-1], postHistoryPath)
+
+  @staticmethod
+  def getPostHistoryRoot():
+    (postPath, postHistoryPath) = Parser.getConfigPaths()
+    tree = etree.parse(postHistoryPath)
+    return tree.getroot()
+
+  @staticmethod
+  def getAllPostHistoryItemsFromRoot(root):
+    items = []
+    for elem in root:
+      p = PostHistoryItem(elem)
+      items.append(p)
+    return items
+
   @staticmethod
   def getRoot():
-    file_ = open("config.txt")
-    path = file_.readline()
-    file_.close()
-
-##    path = "/home/ezz/Dropbox/nlp dataset/Stack Exchange Data Dump - Sept 2011/Content/092011 Super User/posts.xml"
-    tree = etree.parse(path[:-1])
+    (postPath, postHistoryPath) = Parser.getConfigPaths()
+    tree = etree.parse(postPath)
     return tree.getroot()
 
   @staticmethod
