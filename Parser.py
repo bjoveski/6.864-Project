@@ -1,6 +1,6 @@
 from lxml import etree
 import lxml.html
-
+from nltk.tokenize import RegexpTokenizer
 
 import Question
 from Question import *
@@ -11,13 +11,88 @@ from PostHistoryItem import *
 class Parser:
 
   @staticmethod
+  def Generate_Tags_Dictionary(Q):
+    bigram={}
+    Dict_bi_list=[]
+    b=0
+    dictionary
+    c=0
+    for i in Q:
+      for j in i.tags:
+        w=j.split("-")
+        for t in w:
+          if t.lower() in dictionary:
+            Dict_list[dictionary[t.lower()]][1] +=1
+          else:
+            dictionary[t.lower()]=c
+            Dict_list.append([t.lower(),1,1])
+            c+=1
+        if '-' in j:
+          if Dict_list[dictionary[w[0]]][2]<len(w):
+            Dict_list[dictionary[w[0]]][2]=len(w)
+          if j.lower() in bigram:
+            Dict_bi_list[bigram[j.lower()]][1] +=1
+          else:
+            bigram[j.lower()]=b
+            Dict_bi_list.append([j.lower(),1])
+            b+=1
+
+    return dictionary,Dict_list,bigram,Dict_bi_list
+
+
+  @staticmethod
+  def evaluate_vector(sentence,dictionary_general,dictionary_tags,Dict_list,bigram):
+    general_vector[[],[],[]]
+    tags_vector=[[],[],[]]
+    bigram_vector=[[],[],[]]
+    c=0
+    tokenizer=RegexpTokenizer("[\w']+")
+    S=tokenizer.tokenize(sentence.lower())
+    for i in S:
+      if i in dictionary_general:
+        if i in general_vector[0]:
+          general_vector[2][general_vector[0].index(i)]+=1
+        else:
+          general_vector[0].append(i)
+          general_vector[1].append(dictionary_general[i])
+          general_vector[2].append(1)
+      if i in dictionary_tags:
+        if i in word_vector[0]:
+          word_vector[2][word_vector[0].index(i)]+=1
+        else:
+          word_vector[0].append(i)
+          word_vector[1].append(dictionary_tags[i])
+          word_vector[2].append(1)
+        j=1
+        bigram_test=i
+        while j<Dict_list[dictionary_tags[i]][2]:
+          bigram_test+='-'
+          if((c+j) <len(S)):
+            bigram_test+=S[c+j]
+          if bigram_test in bigram:
+            if bigram_test in bigram_vector[0]:
+              bigram_vector[2][bigram_vector[0].index(bigram_test)]+=1
+            else:
+              bigram_vector[0].append(bigram_test)
+              bigram_vector[1].append(bigram[bigram_test])
+              bigram_vector[2].append(1)
+          j+=1
+      c+=1
+    return general_vector,word_vector,bigram_vector
+
+
+
+  @staticmethod
   def getPostHistoryItems(start=0, end=100):
       num = end - start
-      items = [None] * (num)
-      (postPath, postHistoryPath) = Parser.getConfigPaths()
+      items = [None] * (num)      
       tree = Parser.getPostHistoryRoot()
+      print "gotten tree"
       for i in range(num):
+        if (i % 100 == 0):
+          print "acquiring item %d, id= %d " % (i,  start + i)
         items[i] = PostHistoryItem(tree[start + i])
+        
       return items
 
   @staticmethod
@@ -25,6 +100,7 @@ class Parser:
     file_ = open("config.txt")
     postPath = file_.readline()
     postHistoryPath = file_.readline()
+
     file_.close()
     return (postPath[:-1], postHistoryPath)
 
@@ -91,3 +167,59 @@ class Parser:
   @staticmethod
   def getWordArray(string):
     return string.lower().split()
+
+
+  @staticmethod
+  def getDuplicatePostsIds():
+    path = "/Users/bjoveski/Dropbox/nlp dataset/092011 Super User/duplicates/duplicate_posts_id.txt"
+    file_ = open(path)
+    
+    duplicatePostsDict = {}
+ 
+    for line in file_:      
+      duplicatePostsDict[int(line)] = []
+    file_.close()
+
+    return duplicatePostsDict
+
+
+  @staticmethod
+  def generateGlobalDictionaryUnfiltered():
+    folderPath = "/Users/bjoveski/Dropbox/nlp dataset/092011 Super User/preproc"
+    number_indeces = 2
+    tokenizer = RegexpTokenizer("[\w']+")
+    globalDict = {}
+
+    for i in range(1, number_indeces):
+      path = "%s/q_full_%s.txt" % (folderPath, i)
+      file_ = open(path)
+      for line in file_:
+        S = tokenizer.tokenize(line)
+        for token in S:
+          if token in globalDict:
+            globalDict[token] += 1
+          else:
+            globalDict[token] = 1
+      file_.close()
+
+    return globalDict
+
+  @staticmethod
+  def outputDictionaryToFile(dictionary):
+    filePath = "/Users/bjoveski/Dropbox/nlp dataset/092011 Super User/globalDictUnfiltered.txt"
+    file_ = open(filePath, "w")
+    for key in dictionary.iterkeys():
+      file_.write("%s %s\n" % (key, dictionary[key]))
+
+    file_.close()
+
+
+  @staticmethod
+  def createDictionaryFromFilePath(path):
+    file_ = open(path)
+    dict = {}
+    for line in file_:
+      (item, count) = line.split(" ")
+      dict[item] = int(count)
+    return dict
+
