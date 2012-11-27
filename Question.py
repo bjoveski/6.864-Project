@@ -15,6 +15,7 @@ class Question:
     self.score = int(elem.attrib["Score"])
     self.tags = Parser.Parser.getTags(elem)
     self.bodyString = Parser.Parser.getStringFromHtmlString(self.body)
+    self.postId = int(elem.attrib["Id"])
 
 
   def populateTitleVector(self, titleHistogram):
