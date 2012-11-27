@@ -13,37 +13,67 @@ class Parser:
   @staticmethod
   def Generate_Tags_Dictionary(Q):
     bigram={}
-    Dict_bi_list=[]
-    b=0
-    dictionary
-    c=0
+    dictionary={}
     for i in Q:
       for j in i.tags:
         w=j.split("-")
         for t in w:
           if t.lower() in dictionary:
-            Dict_list[dictionary[t.lower()]][1] +=1
+            dictionary[t.lower()][0] +=1
           else:
-            dictionary[t.lower()]=c
-            Dict_list.append([t.lower(),1,1])
-            c+=1
+            dictionary[t.lower()]=[1,1]
+            
         if '-' in j:
-          if Dict_list[dictionary[w[0]]][2]<len(w):
-            Dict_list[dictionary[w[0]]][2]=len(w)
+          if dictionary[w[0]][1]<len(w):
+            dictionary[w[0]][1]=len(w)
           if j.lower() in bigram:
-            Dict_bi_list[bigram[j.lower()]][1] +=1
+            bigram[j.lower()] +=1
           else:
-            bigram[j.lower()]=b
-            Dict_bi_list.append([j.lower(),1])
-            b+=1
+            bigram[j.lower()]=1
 
-    return dictionary,Dict_list,bigram,Dict_bi_list
+    return dictionary,bigram
+
 
 
   @staticmethod
-  def evaluate_vector(sentence,dictionary_general,dictionary_tags,Dict_list,bigram):
-    general_vector[[],[],[]]
-    tags_vector=[[],[],[]]
+  def Sort_Dictionary(D):
+    new_Dict={}
+    c=0
+    StopWords=stopwords.words('english')
+    notRemove = ["which", "who", "when", "where", "why", "how", "what", "don", "should", "not"]
+    for i in notRemove:
+      StopWords.remove(i)
+    D_sorted=sorted(D.iteritems(), key = operator.itemgetter(1), reverse=True)
+    for i in D_sorted:
+      if i[0] not in StopWords:
+        if i[1] >1:
+          new_Dict[i[0]]=[c]
+          new_Dict[i[0]].append(i[1])
+          c+=1
+    return new_Dict
+
+  @staticmethod
+  def Sort_Tags_Dictionary(D):
+    new_Dict={}
+    c=0
+    StopWords=stopwords.words('english')
+    notRemove = ["which", "who", "when", "where", "why", "how", "what", "don", "should", "not"]
+    for i in notRemove:
+      StopWords.remove(i)
+    D_sorted=sorted(D.iteritems(), key = operator.itemgetter(1), reverse=True)
+    for i in D_sorted:
+      if i[0] not in StopWords:
+        if i[1][0] >1:
+          new_Dict[i[0]]=[c]
+          new_Dict[i[0]].extend(i[1])
+          c+=1
+    return new_Dict
+  
+
+  @staticmethod
+  def evaluate_vector(sentence,dictionary_general,dictionary_tags,bigram):
+    general_vector=[[],[],[]]
+    word_vector=[[],[],[]]
     bigram_vector=[[],[],[]]
     c=0
     tokenizer=RegexpTokenizer("[\w']+")
@@ -61,11 +91,11 @@ class Parser:
           word_vector[2][word_vector[0].index(i)]+=1
         else:
           word_vector[0].append(i)
-          word_vector[1].append(dictionary_tags[i])
+          word_vector[1].append(dictionary_tags[i][0])
           word_vector[2].append(1)
         j=1
         bigram_test=i
-        while j<Dict_list[dictionary_tags[i]][2]:
+        while j<dictionary_tags[i][1]:
           bigram_test+='-'
           if((c+j) <len(S)):
             bigram_test+=S[c+j]
@@ -79,6 +109,7 @@ class Parser:
           j+=1
       c+=1
     return general_vector,word_vector,bigram_vector
+
 
 
 
