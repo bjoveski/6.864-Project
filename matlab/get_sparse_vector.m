@@ -1,14 +1,9 @@
 %% Main function to read a file (maybe huge)
+% returns all vectors as rows of V
+% warning: I am using sed to split the file
 
-function [V , id_full] = get_sparse_vector()
+function [V , id_full] = get_sparse_vector(filename)
 
-    %get path
-    fid = fopen('../config.txt');
-    path = fgets(fid);
-    path = path(1:end-10);
-    fclose(fid);
-    %filename
-    filename = [path 'vectors/descriptions/vector_description_global.txt'];
     %correct file name
     filename = strrep(filename,' ','\ ');
     
@@ -28,7 +23,7 @@ function [V , id_full] = get_sparse_vector()
         index_full = [index_full;index];
         count_full = [count_full;count];
         id_full = [id_full;id];
-        fprintf('finished lines %d to %d',i,f)
+        fprintf('finished lines %d to %d\n',i,f)
     end
     V = sparse(enum_full,index_full,count_full);
 

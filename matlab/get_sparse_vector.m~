@@ -1,24 +1,25 @@
 %% Main function to read a file (maybe huge)
+% returns all vectors as rows of V
 
-function [V , id] = get_sparse_vector()
+function [V , id_full] = get_sparse_vector(filename)
 
     %get path
     fid = fopen('../config.txt');
     path = fgets(fid);
     path = path(1:end-10);
     fclose(fid);
-
-    
-
+    %filename
     filename = [path 'vectors/descriptions/vector_description_global.txt'];
+    %correct file name
     filename = strrep(filename,' ','\ ');
     
-    
+    %split huge file into smaller files
     N = 92789;
     step = 10e3;
     enum_full =[];
     index_full =[];
     count_full =[];
+    id_full=[];
     for i = 1:step:N
         f = min(i+step-1,N);
         !rm deleteme.txt
@@ -27,9 +28,10 @@ function [V , id] = get_sparse_vector()
         enum_full = [enum_full;enum+i-1];
         index_full = [index_full;index];
         count_full = [count_full;count];
-        sprintf('finished')
+        id_full = [id_full;id];
+        fprintf('finished lines %d to %d\n',i,f)
     end
-    V = sparse(enum,index,count);
+    V = sparse(enum_full,index_full,count_full);
 
 end
 
