@@ -59,7 +59,9 @@ class Parser:
 
   @staticmethod
   def getStringFromHtmlString(htmlString):
-    return lxml.html.fromstring(htmlString).text_content()
+    my_ascii = htmlString.encode('ascii', 'ignore')
+    return lxml.html.fromstring(my_ascii).text_content()
+    #return nltk.util.clean_html(my_ascii)
 
  
   @staticmethod
@@ -68,22 +70,48 @@ class Parser:
 
   @staticmethod
   def getAllQuestionsFromRoot(root):
+    path = Parser.getConfigPaths()[0][0:-9]+'preproc/'
     questions = []
     for elem in root:
       if elem.attrib["PostTypeId"] == "1": ## question
         q = Question(elem)
-        questions.append(q)
+        #questions.append(q)
+        q.populateAnswer(root)
+        file_ = open(path + 'q_full_' +q.id+ '.txt'  , 'w')
+        q.printQuestion(file_)
 
     print("question count = %d" % len(questions))
     return questions
   
   @staticmethod
-  def getQuestionsFromRoot(root, nodeCount):  
+  def findIdFromRoot(root, I):
+    lo = 0
+    hi = len(root)
+    while lo < hi:
+        mid = (lo+hi)//2
+        midval = int(root[mid].attrib["Id"])
+        if midval < I:
+            lo = mid+1
+        elif midval > I: 
+            hi = mid
+        else:
+            return root[mid]
+    return []
+  
+
+  @staticmethod
+  def getQuestionsFromRoot(root, start,end):
+    path = Parser.getConfigPaths()[0][0:-9]+'preproc/'
     questions = []
-    for i in range(nodeCount):
+    for i in range(start,end):
       if root[i].attrib["PostTypeId"] == "1":
         q = Question(root[i])
-        questions.append(q)
+        #questions.append(q)
+        q.populateAnswer(root)
+        file_ = open(path + 'q_full_' +q.id+ '.txt'  , 'w')
+        q.printQuestion(file_)
+      if (i%50)==0:
+        print i
 
     print("question count = %d" % len(questions))
     return questions
@@ -91,3 +119,4 @@ class Parser:
   @staticmethod
   def getWordArray(string):
     return string.lower().split()
+

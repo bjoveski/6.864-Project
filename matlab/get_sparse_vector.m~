@@ -1,0 +1,59 @@
+%% Main function to read a file (maybe huge)
+
+function [V , id] = get_sparse_vector()
+
+    %get path
+    fid = fopen('../config.txt');
+    path = fgets(fid);
+    path = path(1:end-10);
+    fclose(fid);
+
+    
+
+    filename = [path 'vectors/descriptions/vector_description_global.txt'];
+    filename = strrep(filename,' ','\ ');
+    
+    
+    N = 92789;
+    step = 10e3;
+    enum_full =[];
+    index_full =[];
+    count_full =[];
+    for i = 1:step:N
+        f = min(i+step-1,N);
+        !rm deleteme.txt
+        system(sprintf('sed -n %d,%dp %s >> deleteme.txt',i,f,filename));
+        [enum,index,count,id] = read_small_file('deleteme.txt');
+        enum_full = [enum_full;enum+i-1];
+        index_full = [index_full;index];
+        count_full = [count_full;count];
+        sprintf('finished')
+    end
+    V = sparse(enum,index,count);
+
+end
+
+%% Read small file
+
+function [enum,index,count,id] = read_small_file(filename)
+    M = csvread(filename);
+    id = M(:,1);
+    M = M(:,2:end);
+    numvec = size(M,1);
+    col = size(M,2);
+    if(mod(col,2))
+        M=[M zeros(numvec,1)];
+        col=col+1;
+    end
+    
+    enum = repmat(transpose(1:numvec),[col/2 1]);
+    even = 2:2:col;
+    odd = even-1;
+    index = reshape(M(:,odd),[numel(M)/2 1]);
+    count = reshape(M(:,even),[numel(M)/2 1]);
+    
+    nonz = find(index ~= 0);
+    enum = enum(nonz);
+    index = index(nonz);
+    count = count(nonz);
+end
