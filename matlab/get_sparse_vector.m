@@ -8,7 +8,8 @@ function [V , id_full] = get_sparse_vector(filename)
     filename = strrep(filename,' ','\ ');
     
     %split huge file into smaller files
-    N = 92789;
+    N = 92789;%for vectors
+    %N = 25246; %for grobal dict
     step = 10e3;
     enum_full =[];
     index_full =[];
@@ -25,7 +26,7 @@ function [V , id_full] = get_sparse_vector(filename)
         id_full = [id_full;id];
         fprintf('finished lines %d to %d\n',i,f)
     end
-    V = sparse(enum_full,index_full,count_full);
+    V = sparse(id_full,index_full,count_full,331895,max(index_full));
 
 end
 
@@ -43,6 +44,7 @@ function [enum,index,count,id] = read_small_file(filename)
     end
     
     enum = repmat(transpose(1:numvec),[col/2 1]);
+    id = repmat(id,[col/2 1]);
     even = 2:2:col;
     odd = even-1;
     index = reshape(M(:,odd),[numel(M)/2 1]);
@@ -52,4 +54,5 @@ function [enum,index,count,id] = read_small_file(filename)
     enum = enum(nonz);
     index = index(nonz);
     count = count(nonz);
+    id = id(nonz);
 end
