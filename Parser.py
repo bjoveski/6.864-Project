@@ -253,4 +253,3 @@ class Parser:
       (item, count) = line.split(" ")
       dict[item] = int(count)
     return dict
-

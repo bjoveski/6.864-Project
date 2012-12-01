@@ -6,17 +6,46 @@ from numpy import *
 import Parser
 from Parser import *
 
+import Answer
+from Answer import *
+
 
 class Question:
 
   def __init__(self, elem):
+    self.id = elem.attrib["Id"]
     self.body = elem.attrib["Body"]
     self.title = elem.attrib["Title"]
     self.score = int(elem.attrib["Score"])
     self.tags = Parser.Parser.getTags(elem)
     self.bodyString = Parser.Parser.getStringFromHtmlString(self.body)
     self.postId = int(elem.attrib["Id"])
+    self.ans_count = 0
+    if ("AnswerCount" in elem.attrib):
+      self.ans_count = int(elem.attrib["AnswerCount"])
+    self.ans_id = -1
+    self.answer = []
+    if ("AcceptedAnswerId" in elem.attrib):
+      self.ans_id = int(elem.attrib["AcceptedAnswerId"])
 
+  def printQuestion(self,file_):
+    print>>file_,self.score
+    print>>file_,self.title.encode('ascii', 'ignore').lower().replace('\n', ' ')
+    print>>file_,self.bodyString.encode('ascii', 'ignore').lower().replace('\n', ' ')
+    print>>file_," ".join(self.tags)
+    ans = ''
+    if(self.answer):
+        ans = self.answer.bodyString.encode('ascii', 'ignore').lower().replace('\n', ' ')
+    print>>file_,ans
+    print>>file_,self.ans_count
+
+  def populateAnswer(self,root):
+    if (self.ans_id>=0):
+      elem = Parser.Parser.findIdFromRoot(root,self.ans_id)
+      if (elem):
+        self.answer = Answer(elem)
+      else:
+        self.ans_id = -1
 
   def populateTitleVector(self, titleHistogram):
     self.titleVector = zeros(titleHistogram.vocabSize, dtype = int16)
