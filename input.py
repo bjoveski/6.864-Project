@@ -107,3 +107,16 @@ def printRegexes(duplicateId2Post):
         file_.write("%s %s\n" % (i, int(res)))
 
   file_.close()
+
+
+def ezzFunctions():
+  questions = Parser.getAllQuestionsFromRoot(Parser.getRoot())
+  y=Parser.Generate_Tags_Dictionary(questions)
+  #DD1=Sort_Dictionary(The_Global_Dictionary) #use this function to sort and filter the global dictionary here
+  DD1={} # remove this line when you use the global dictionary
+  DD2=Parser.Sort_Tags_Dictionary(y[0])
+  DD3=Parser.Sort_Dictionary(y[1])
+  SS="What is the best anti-virus for Windows 7?"
+  t=Parser.evaluate_vector(SS,DD1,DD2,DD3)
+  # t has the three feature vectors
+  return t
