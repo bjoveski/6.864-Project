@@ -19,6 +19,7 @@ class Question:
     self.score = int(elem.attrib["Score"])
     self.tags = Parser.Parser.getTags(elem)
     self.bodyString = Parser.Parser.getStringFromHtmlString(self.body)
+    self.postId = int(elem.attrib["Id"])
     self.ans_count = 0
     if ("AnswerCount" in elem.attrib):
       self.ans_count = int(elem.attrib["AnswerCount"])

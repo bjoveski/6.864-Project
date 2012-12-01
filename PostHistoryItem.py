@@ -7,3 +7,18 @@ class PostHistoryItem:
     self.closeReasonId = elem.attrib.get("CloseReasonId")
     
 
+
+
+
+
+
+'''
+unix scripts:
+extract PostId from postshistory whose CloseReasonId=1
+
+grep CloseReasonId=\"1\" posthistory.xml | cut  -d " " -f 6 | cut -d \" -f 2
+
+####
+
+
+'''
