@@ -2,15 +2,15 @@
 % returns all vectors as rows of V
 % warning: I am using sed to split the file
 
-function [V , id_full] = get_sparse_vector(filename)
-
+function [V , id_full] = get_sparse_vector(filename, nrows, ncolumns)
+    %nrows = 331895;
     %correct file name
     filename = strrep(filename,' ','\ ');
     
     %split huge file into smaller files
-    N = 92789;%for vectors
-    %N = 25246; %for grobal dict
-    step = 10e3;
+    %N = 92789;%for vectors
+    N = 25246; %for grobal dict
+    step = 3e3;
     enum_full =[];
     index_full =[];
     count_full =[];
@@ -26,7 +26,7 @@ function [V , id_full] = get_sparse_vector(filename)
         id_full = [id_full;id];
         fprintf('finished lines %d to %d\n',i,f)
     end
-    V = sparse(id_full,index_full,count_full,331895,max(index_full));
+    V = sparse(id_full,index_full,count_full,nrows,ncolumns);
 
 end
 
