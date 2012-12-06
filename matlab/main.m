@@ -19,7 +19,7 @@
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
 
-function main(lambda, size_test)
+function misclass = main(lambda, size_test)
 
 load duplicates
 pairs = pairs_less;
