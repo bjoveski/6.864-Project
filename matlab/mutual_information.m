@@ -9,8 +9,8 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
     individual_prob_title = individual_count(title_matrix) / N;
     
     i = 1;
-    range = 1:50;
-    % range = START:END;
+    % range = 1:50;
+    range = START:END;
     % range = randi([1,num_words], 50);
     % range = range(1,:);
     tic;
@@ -43,7 +43,7 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
            save(save_file, 'mut_inf')
            % reset vars
            i = 0;
-           mut_inf = sparse(NUM_ROWS, num_words);
+           mut_inf = sparse(num_words, num_words);
         end
         
         i = i + 1;
