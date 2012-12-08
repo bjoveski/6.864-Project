@@ -1,8 +1,8 @@
-function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD, NUM_ROWS)
+function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD, START, END)
     N = 92789; % number of documents
     num_words = 114268;
     BATCH_SIZE = 5000;
-    mut_inf = sparse(NUM_ROWS, num_words); %sparse(num_words, num_words);
+    mut_inf = sparse(num_words, num_words); %sparse(num_words, num_words);
 %    save(save_file, 'res')
     
     individual_prob_answer = individual_count(answers_matrix) / N;
@@ -10,7 +10,7 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
     
     i = 1;
     range = 1:50;
-    % range = 1:NUM_ROWS;
+    % range = START:END;
     % range = randi([1,num_words], 50);
     % range = range(1,:);
     tic;
@@ -29,7 +29,7 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
         
         % progress bar
         if (mod(w_index, 128) == 0)
-           str = sprintf('processing %5d    frac=%2f', w_index, w_index / NUM_ROWS);
+           str = sprintf('processing %5d    frac=%2f', w_index, w_index / (END - START));
            disp(str);
            toc;
            tic;
@@ -39,7 +39,7 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
         if (i >= BATCH_SIZE)
            str = sprintf('#### outputing %5d #####', w_index);
            disp(str);
-           save_file = sprintf('mut_inf_%d_%d.mat', BATCH_SIZE, w_index);
+           save_file = sprintf('mut_inf_title_ans_%d_%d.mat', BATCH_SIZE, w_index);
            save(save_file, 'mut_inf')
            % reset vars
            i = 0;
