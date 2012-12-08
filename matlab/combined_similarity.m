@@ -56,15 +56,13 @@ function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, d
             sim = sim + red_lambda(1)*calculate_similarity(ques_title_global, corpus_matrix, 'cosine');
         end
         if (red_lambda(2)~=0)
-            wordnet_question = wordnet_sim(ques_title_global~=0,:);
-            sim = sim + red_lambda(2)*calculate_similarity(ques_title_global, corpus_matrix, 'wordnet', wordnet_question);
+            sim = sim + red_lambda(2)*calculate_similarity(ques_title_global, corpus_matrix, 'wordnet', wordnet_sim);
         end
         if (red_lambda(3)~=0)
             sim = sim + red_lambda(3)*calculate_similarity(ques_desc_global, corpus_matrix, 'cosine');
         end
         if (red_lambda(4)~=0)
-            wordnet_question = wordnet_sim(ques_desc_global~=0,:);
-            sim = sim + red_lambda(4)*calculate_similarity(ques_desc_global, corpus_matrix, 'wordnet', wordnet_question);
+            sim = sim + red_lambda(4)*calculate_similarity(ques_desc_global, corpus_matrix, 'wordnet', wordnet_sim);
         end
     
     elseif strcmp(dictionary,'alltags')
