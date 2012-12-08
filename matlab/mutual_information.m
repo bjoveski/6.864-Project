@@ -1,23 +1,30 @@
-function [mut_inf] = mutual_information(document_matrix, THRESHOLD, NUM_ROWS)
+function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD, NUM_ROWS)
     N = 92789; % number of documents
     num_words = 114268;
     BATCH_SIZE = 5000;
     mut_inf = sparse(NUM_ROWS, num_words); %sparse(num_words, num_words);
 %    save(save_file, 'res')
     
-    individual_prob = individual_count(document_matrix) / N;
+    individual_prob_answer = individual_count(answers_matrix) / N;
+    individual_prob_title = individual_count(title_matrix) / N;
     
     i = 1;
-    % range = 1:50;
-    range = 1:NUM_ROWS;
+    range = 1:50;
+    % range = 1:NUM_ROWS;
     % range = randi([1,num_words], 50);
     % range = range(1,:);
     tic;
     for w_index=range
-        mutual_info_prob = mutual_count(w_index, document_matrix) / N;
+        % calculate mutual_info prob
+        term_col_title = title_matrix(:, w_index);
+        mutual_info_prob = mutual_count_col(term_col_title, answers_matrix) / N;
+  
+        % get p(X_w)
+        indiviual_title_w_prob = individual_prob_title(w_index);
+        
         [~, rows] = size(mutual_info_prob);
         if rows > 1
-            mut_inf(w_index,:) = mutual_information_row(w_index, individual_prob, mutual_info_prob, THRESHOLD);
+            mut_inf(w_index,:) = mutual_information_row(indiviual_title_w_prob, individual_prob_answer, mutual_info_prob, THRESHOLD);
         end
         
         % progress bar
@@ -46,10 +53,10 @@ end
 
 
 %% mutual info
-function [wth_row] = mutual_information_row(w_index, individual_count_prob, mutual_info_prob, THRESHOLD)
+function [wth_row] = mutual_information_row(indiviual_title_w_prob, individual_count_prob, mutual_info_prob, THRESHOLD)
     %% X_w = 1 X_u = 1
     
-    p_w = individual_count_prob(w_index);
+    p_w = indiviual_title_w_prob;
     p_u_row = individual_count_prob;
     p_wu_row = mutual_info_prob;
 
@@ -64,24 +71,24 @@ function [wth_row] = mutual_information_row(w_index, individual_count_prob, mutu
 
     
     %% X_w = 1 X_u = 0
-    p_w = individual_count_prob(w_index);
+    p_w = indiviual_title_w_prob;
     p_u_row = 1 - individual_count_prob;
-    p_wu_row = individual_count_prob(w_index) - mutual_info_prob;
+    p_wu_row = indiviual_title_w_prob - mutual_info_prob;
 
     
     wth_row = wth_row + calculate_summand(p_w, p_u_row, p_wu_row);
     
     %% X_w = 0 X_u = 1
-    p_w = 1 - individual_count_prob(w_index);
+    p_w = 1 - indiviual_title_w_prob;
     p_u_row = individual_count_prob;
     p_wu_row = individual_count_prob - mutual_info_prob;
 
     wth_row = wth_row + calculate_summand(p_w, p_u_row, p_wu_row);
     
     %% X_w = 0 X_u = 0
-    p_w = 1 - individual_count_prob(w_index);
+    p_w = 1 - indiviual_title_w_prob;
     p_u_row = 1 - individual_count_prob;
-    p_wu_row = (1 + mutual_info_prob) - (individual_count_prob(w_index) + individual_count_prob);
+    p_wu_row = (1 + mutual_info_prob) - (indiviual_title_w_prob + individual_count_prob);
 
     wth_row = wth_row + calculate_summand(p_w, p_u_row, p_wu_row);
 
@@ -89,7 +96,6 @@ function [wth_row] = mutual_information_row(w_index, individual_count_prob, mutu
     wth_row(isnan(wth_row)) = 0;
     wth_row = wth_row.*(wth_row > THRESHOLD);
 end
-
 
 
 function [mut_inf_row] = calculate_summand(p_w, p_u_row, p_wu_row)
@@ -103,11 +109,17 @@ end
 
 %% function compute mutual count
 % mutual_count_row(1,i) = number of docs s.t. count(w_index=1, i=1)
-function [mutual_count_row] = mutual_count(w_index, document_matrix)
-    term = document_matrix(:, w_index);
-    term_matrix = (document_matrix(term>0,:)>0);
+function [mutual_count_row] = mutual_count(w_index, answer_matrix)
+    term = answer_matrix(:, w_index);
+    term_matrix = (answer_matrix(term>0,:)>0);
     mutual_count_row = sum(term_matrix);
 end
+
+function [mutual_count_row] = mutual_count_col(term_col_title, answer_matrix)
+    term_matrix = (answer_matrix(term_col_title>0,:)>0);
+    mutual_count_row = sum(term_matrix);
+end
+
 
 function [individual_count_row] = individual_count(document_matrix)
     individual_count_row = sum(document_matrix > 0, 1);
