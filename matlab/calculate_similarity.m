@@ -1,13 +1,12 @@
 %% vector of scores between q and matrix 
-function [similarity] = calculate_similarity(question, questions_matrix, type, varargin)
-    idf = log(331895./(sum(questions_matrix>0)+1));
+function [similarity] = calculate_similarity(question, questions_matrix, type, expected_id, varargin)
     switch type
         case 'cosine'
             similarity = tfidf_score(question, questions_matrix);
         case 'wordnet'
-            similarity = tfidf_score(question * varargin{1}, questions_matrix);
-            %similarity = wordnet_score(question, questions_matrix, varargin{1});
-    end   
+            %similarity = tfidf_score(question * varargin{1}, questions_matrix);
+            similarity = wordnet_score(question, questions_matrix, varargin{1});
+    end
 end
 
 %% cosine
