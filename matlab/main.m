@@ -18,11 +18,10 @@
 % 17. cosinetags description vs answer
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
-% 20. query likelihook model
-% 21. translation title vs description
-% 22. translation title vs answer
+% 20. query likelihook title vs desc
+% 21. query likelihook desc vs desc
+% 22. translation description vs title
 % 23. translation description vs description
-% 24. translation description vs answer
 
 
 
@@ -32,7 +31,7 @@ load duplicates
 pairs = pairs_less;
 load vectors
 
-for i=length(lambda)+1:24
+for i=length(lambda)+1:25
     lambda(i)=0;
 end
 
