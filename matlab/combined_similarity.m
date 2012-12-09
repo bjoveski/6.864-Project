@@ -18,8 +18,10 @@
 % 17. cosinetags description vs answer
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
+% 20. translation title vs description
+% 21. translation description vs description
 
-function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expected_id, wordnet_sim)
+function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expected_id)
     corpus_title_global = corpus_matrices{1};
     corpus_desc_global = corpus_matrices{2};
     corpus_ans_global = corpus_matrices{3};
@@ -30,39 +32,50 @@ function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expect
     
     sim = zeros(size(corpus_matrices,1),1); 
     
-    sim = sim + combined_single_corpus(ques_vectors,corpus_title_global,lambda([1,3,10,12]),'global', expected_id, wordnet_sim);
-    sim = sim + combined_single_corpus(ques_vectors,corpus_desc_global,lambda([4,6,13,15]),'global', expected_id, wordnet_sim);
-    sim = sim + combined_single_corpus(ques_vectors,corpus_ans_global,lambda([7,9,16,18]),'global', expected_id, wordnet_sim);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_title_global,lambda([1,3,10,12]),'global', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_desc_global,lambda([4,6,13,15,20,21]),'global', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_ans_global,lambda([7,9,16,18]),'global', expected_id);
     
-    sim = sim + combined_single_corpus(ques_vectors,corpus_title_alltags,lambda([2,11]),'alltags', expected_id, wordnet_sim);
-    sim = sim + combined_single_corpus(ques_vectors,corpus_desc_alltags,lambda([5,14]),'alltags', expected_id, wordnet_sim);
-    sim = sim + combined_single_corpus(ques_vectors,corpus_ans_alltags,lambda([8,17]),'alltags', expected_id, wordnet_sim);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_title_alltags,lambda([2,11]),'alltags', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_desc_alltags,lambda([5,14]),'alltags', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_ans_alltags,lambda([8,17]),'alltags', expected_id);
     
-    sim = sim + combined_single_corpus(ques_vectors,corpus_tag_alltags,lambda(19),'onlytags', expected_id, wordnet_sim);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_tag_alltags,lambda(19),'onlytags', expected_id);
 
 end
 
-function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, dictionary, expected_id, wordnet_sim)
+function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, dictionary, expected_id, varargin)
     ques_title_global = ques_vectors{1};
     ques_desc_global = ques_vectors{2};
     ques_title_alltags = ques_vectors{3};
     ques_desc_alltags = ques_vectors{4};
     ques_tag_alltags = ques_vectors{5};
     
+    
     sim = zeros(size(corpus_matrix,1),1);
     
     if strcmp(dictionary,'global')
         if (red_lambda(1)~=0)
-            sim = sim + red_lambda(1)*calculate_similarity(ques_title_global, corpus_matrix, 'cosine', expected_id);
+            sim = sim + red_lambda(1)*calculate_similarity(ques_title_global, corpus_matrix, 'cosine', expected_id,varargin);
         end
         if (red_lambda(2)~=0)
+            load wordnet_sim
             sim = sim + red_lambda(2)*calculate_similarity(ques_title_global, corpus_matrix, 'wordnet', expected_id, wordnet_sim);
         end
         if (red_lambda(3)~=0)
             sim = sim + red_lambda(3)*calculate_similarity(ques_desc_global, corpus_matrix, 'cosine', expected_id);
         end
         if (red_lambda(4)~=0)
+            load wordnet_sim
             sim = sim + red_lambda(4)*calculate_similarity(ques_desc_global, corpus_matrix, 'wordnet', expected_id, wordnet_sim);
+        end
+        if (length(red_lambda)==6)
+            if (red_lambda(5)~=0)
+            	sim = sim + red_lambda(4)*calculate_similarity(ques_desc_global, corpus_matrix, 'trans', expected_id, 'desc');
+            end
+            if (red_lambda(6)~=0)
+            	sim = sim + red_lambda(4)*calculate_similarity(ques_title_global, corpus_matrix, 'trans', expected_id, 'title');
+            end
         end
     
     elseif strcmp(dictionary,'alltags')

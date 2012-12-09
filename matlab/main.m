@@ -18,18 +18,26 @@
 % 17. cosinetags description vs answer
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
+% 20. translation title vs description
+% 21. translation title vs answer
+% 22. translation description vs description
 
-function misclass = main(lambda, size_test)
+
+
+function ranking = main(simil_index, indices_test)
 
 load duplicates
 pairs = pairs_less;
 load vectors
 
+lambda = zeros(1,22);
+lambda(simil_index)=1;
+
 %choose test 
-ind_test = mod((1:size_test)*37,2347)+1;
+ind_test = indices_test;
 test_id = pairs(ind_test, 1);
 test_expected_id = pairs(ind_test, 2);
     
-misclass = iteration(test_id, test_expected_id, lambda);
+ranking = iteration(test_id, test_expected_id, lambda);
 %hist(misclass,50)
 end
