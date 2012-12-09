@@ -11,7 +11,9 @@ function [scores] = iteration (test_ids, expected_ids, lambda)
         expected_id = expected_ids(i);
         ques_vectors = {M_title_global(id,:),M_desc_global(id,:),M_title_alltags(id,:),M_desc_alltags(id,:),M_tag_alltags(id,:)};
         similarity = combined_similarity(ques_vectors, corpus_matrices, lambda, expected_id);
-        scores(i) = similarity_to_score(expected_id, similarity, 10);  
-        disp(['finished question' num2str(i)])
+        scores(i) = similarity_to_score(expected_id, similarity);  
+        if(mod(i,10)==0)
+            disp(['finished question' num2str(i)])
+        end
     end
 end

@@ -1,9 +1,14 @@
-mutual=sparse(114268,114268);
-count=0;
-for i= 5e3:5e3:110e3
-    load(['mut_inf_title_ans_5000_' num2str(i) '.mat'])
-    mut = mut_inf.*(mut_inf>0.0000000000007);
-    x = nnz(mutual) + nnz(mut);
-    mutual = mutual + mut;
-    disp(nnz(mutual) - x)
+load trans_desc_desc
+load vectors
+questions_matrix = M_desc_global;
+trans_prob = trans_desc_desc;
+normalized = diag(sparse(1./sum(questions_matrix,2)))*questions_matrix;
+translation = sparse(size(normalized,1),size(normalized,2));
+for i=1:size(normalized,1)
+    aux = normalized(i,:) * trans_prob;
+    sorted = sort(aux,2,'descend');
+    translation(i,:) = aux.*(aux>sorted(20));
+    if(mod(i,1000)==0)
+        disp(i)
+    end
 end
