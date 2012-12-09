@@ -6,5 +6,5 @@ function [score] = similarity_to_score(expected_id, similarity_vector, TOP_K)
     else
         score = 1;
     end
-    score = min(rank,100);
+    score = min(rank,1000);
 end
