@@ -31,5 +31,5 @@ test_id = pairs(ind_test, 1);
 test_expected_id = pairs(ind_test, 2);
     
 misclass = iteration(test_id, test_expected_id, lambda);
-hist(misclass,50)
+%hist(misclass,50)
 end
