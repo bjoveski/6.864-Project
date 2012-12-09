@@ -26,14 +26,15 @@
 
 
 
-function ranking = main(simil_index, indices_test)
+function ranking = main(lambda, indices_test)
 
 load duplicates
 pairs = pairs_less;
 load vectors
 
-lambda = zeros(1,22);
-lambda(simil_index)=1;
+for i=length(lambda)+1:24
+    lambda(i)=0;
+end
 
 %choose test 
 ind_test = indices_test;
