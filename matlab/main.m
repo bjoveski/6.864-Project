@@ -38,6 +38,6 @@ ind_test = indices_test;
 test_id = pairs(ind_test, 1);
 test_expected_id = pairs(ind_test, 2);
     
-ranking = iteration(test_id, test_expected_id, lambda);
+misclass = iteration(test_id, test_expected_id, lambda);
 %hist(misclass,50)
 end
