@@ -35,6 +35,8 @@ for i=length(lambda)+1:25
     lambda(i)=0;
 end
 
+indices_test = mod(indices_test*37,2347)+1;
+
 %choose test 
 ind_test = indices_test;
 test_id = pairs(ind_test, 1);
