@@ -18,28 +18,18 @@
 % 17. cosinetags description vs answer
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
-% 20. query likelihook title vs desc
-% 21. query likelihook desc vs desc
-% 22. translation description vs title
-% 23. translation description vs description
 
-
-
-function ranking = main(lambda, indices_test)
+function misclass=old_main(lambda, size_test)
 
 load duplicates
 pairs = pairs_less;
 load vectors
 
-for i=length(lambda)+1:25
-    lambda(i)=0;
-end
-
 %choose test 
-ind_test = indices_test;
+ind_test = mod((1:size_test)*37,2347)+1;
 test_id = pairs(ind_test, 1);
 test_expected_id = pairs(ind_test, 2);
     
-ranking = iteration(test_id, test_expected_id, lambda);
+misclass = iteration(test_id, test_expected_id, lambda);
 %hist(misclass,50)
 end
