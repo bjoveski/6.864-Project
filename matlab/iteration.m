@@ -1,6 +1,6 @@
 %%retuns how many questions we classified correctly for a given iteration
 % ranges from 0 to size(pair_ids)
-function [scores] = iteration (test_ids, expected_ids, lambda)
+function [scores, sameques] = iteration (test_ids, expected_ids, lambda)
     load vectors;
     load Translated;
     
@@ -8,6 +8,7 @@ function [scores] = iteration (test_ids, expected_ids, lambda)
     translated_matrices = {T_title_desc,T_title_ans,T_desc_desc,T_desc_ans};
         
     scores = zeros(length(test_ids),1);
+    sameques = zeros(length(test_ids),1);
     for i = 1:length(test_ids)
         id = test_ids(i);
         expected_id = expected_ids(i);
