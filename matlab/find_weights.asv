@@ -1,0 +1,13 @@
+K=10;
+N=200;
+C=19;
+a_test=1000*ones(K,N);
+L=zeros(1,C);
+Score(3,10);
+W=ones(N,1)/N;
+for k
+Penalty=a(1:C,1:N)*W;
+S=find(Penalty==min(Penalty),1);
+L(S)=L(S)+1;
+a_test(k)=old_main(L,200);
+W=W+a_test(k,:)';

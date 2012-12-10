@@ -39,7 +39,7 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
         if (i >= BATCH_SIZE)
            str = sprintf('#### outputing %5d #####', w_index);
            disp(str);
-           save_file = sprintf('mut_inf_title_ans_%d_%d.mat', BATCH_SIZE, w_index);
+           save_file = sprintf('mut_inf_desc_answ_%d_%d.mat', BATCH_SIZE, w_index);
            save(save_file, 'mut_inf')
            % reset vars
            i = 0;
@@ -47,6 +47,20 @@ function [mut_inf] = mutual_information(title_matrix, answers_matrix, THRESHOLD,
         end
         
         i = i + 1;
+    end
+    
+    % write the end of the file
+    if (i > 1)
+        
+       str = sprintf('#### outputing %5d #####', w_index);
+       disp(str);
+       w_index
+       save_file = sprintf('mut_inf_desc_answ_%d_%d.mat', BATCH_SIZE, w_index);
+       save(save_file, 'mut_inf')
+       % reset vars
+       i = 0;
+       mut_inf = sparse(num_words, num_words);
+        
     end
 end
 

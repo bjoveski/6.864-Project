@@ -18,10 +18,12 @@
 % 17. cosinetags description vs answer
 % 18. semantic description vs answer
 % 19. cosine tags vs tags
-% 20. translation title vs description
-% 21. translation description vs description
+% 20. query likelihook title vs desc
+% 21. query likelihook desc vs desc
+% 22. translation description vs title
+% 23. translation description vs description
 
-function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expected_id)
+function sim = combined_similarity(ques_vectors, corpus_matrices, translated_matrices, lambda, expected_id)
     corpus_title_global = corpus_matrices{1};
     corpus_desc_global = corpus_matrices{2};
     corpus_ans_global = corpus_matrices{3};
@@ -29,6 +31,11 @@ function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expect
     corpus_desc_alltags = corpus_matrices{5};
     corpus_tag_alltags = corpus_matrices{6};
     corpus_ans_alltags = corpus_matrices{7};
+    
+    T_title_desc = translated_matrices{1};
+    T_title_ans = translated_matrices{2};
+    T_desc_desc = translated_matrices{3};
+    T_desc_ans = translated_matrices{4};
     
     sim = zeros(size(corpus_matrices,1),1); 
     
@@ -41,7 +48,10 @@ function sim = combined_similarity(ques_vectors, corpus_matrices, lambda, expect
     sim = sim + combined_single_corpus(ques_vectors,corpus_ans_alltags,lambda([8,17]),'alltags', expected_id);
     
     sim = sim + combined_single_corpus(ques_vectors,corpus_tag_alltags,lambda(19),'onlytags', expected_id);
-
+    
+    %translations 
+    sim = sim + combined_single_corpus(ques_vectors,T_title_desc,lambda(22),'trans_desc', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,T_desc_desc,lambda(23),'trans_desc', expected_id);
 end
 
 function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, dictionary, expected_id, varargin)
@@ -71,10 +81,10 @@ function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, d
         end
         if (length(red_lambda)==6)
             if (red_lambda(5)~=0)
-            	sim = sim + red_lambda(4)*calculate_similarity(ques_desc_global, corpus_matrix, 'trans', expected_id, 'desc');
+            	sim = sim + red_lambda(5)*calculate_similarity(ques_title_global, corpus_matrix, 'trans', expected_id);
             end
             if (red_lambda(6)~=0)
-            	sim = sim + red_lambda(4)*calculate_similarity(ques_title_global, corpus_matrix, 'trans', expected_id, 'title');
+            	sim = sim + red_lambda(6)*calculate_similarity(ques_desc_global, corpus_matrix, 'trans', expected_id);
             end
         end
     
@@ -89,6 +99,11 @@ function sim = combined_single_corpus(ques_vectors, corpus_matrix, red_lambda, d
     elseif strcmp(dictionary,'onlytags')
         if (red_lambda~=0)
             sim = sim + red_lambda*calculate_similarity(ques_tag_alltags, corpus_matrix, 'cosine', expected_id);
+        end
+        
+    elseif strcmp(dictionary,'trans_desc')
+        if (red_lambda~=0)
+            sim = sim + red_lambda(1)*calculate_similarity(ques_desc_global, corpus_matrix, 'cosine', expected_id);
         end
     end
 end
