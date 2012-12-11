@@ -22,7 +22,8 @@
 % 21. query likelihook desc vs desc
 % 22. translation description vs title
 % 23. translation description vs description
-
+% 24. query likelihook title vs title
+% 25. query likelihook desc vs title
 
 
 function ranking = main(lambda, indices_test)

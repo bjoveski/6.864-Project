@@ -40,6 +40,6 @@ end
 
 %% query likelihood model with translation
 function score =  query_transl_score(question, translation)
-    logprob = spfun(@log, translation*1e6);
+    logprob = spfun(@log, translation*100);
     score = logprob * question'; 
 end

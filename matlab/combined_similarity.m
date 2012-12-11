@@ -22,6 +22,8 @@
 % 21. query likelihook desc vs desc
 % 22. translation description vs title
 % 23. translation description vs description
+% 24. query likelihook title vs title
+% 25. query likelihook desc vs title
 
 function sim = combined_similarity(ques_vectors, corpus_matrices, translated_matrices, lambda, expected_id)
     corpus_title_global = corpus_matrices{1};
@@ -39,7 +41,7 @@ function sim = combined_similarity(ques_vectors, corpus_matrices, translated_mat
     
     sim = zeros(size(corpus_matrices,1),1); 
     
-    sim = sim + combined_single_corpus(ques_vectors,corpus_title_global,lambda([1,3,10,12]),'global', expected_id);
+    sim = sim + combined_single_corpus(ques_vectors,corpus_title_global,lambda([1,3,10,12,24,25]),'global', expected_id);
     sim = sim + combined_single_corpus(ques_vectors,corpus_desc_global,lambda([4,6,13,15,20,21]),'global', expected_id);
     sim = sim + combined_single_corpus(ques_vectors,corpus_ans_global,lambda([7,9,16,18]),'global', expected_id);
     
